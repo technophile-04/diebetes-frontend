@@ -1,10 +1,11 @@
 import React from 'react';
-import { Box, Text, VStack, Code, Grid } from '@chakra-ui/react';
+import { Box, Text, VStack, Code, Grid, Button } from '@chakra-ui/react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { Logo } from '../Logo';
 import { useSmartAccountContext } from '../contexts/SmartAccountContext';
 import { useWeb3AuthContext } from '../contexts/SocialLoginContext';
 import ConnectButton from '../components/ConnectButton';
+import AddFunds from '../components/AddFunds';
 
 const Home = () => {
   const {
@@ -21,7 +22,7 @@ const Home = () => {
     setSelectedAccount,
   } = useSmartAccountContext();
 
-  console.log("address", address);
+  console.log('address', address);
 
   return (
     <Box textAlign="center" fontSize="xl">
@@ -33,16 +34,20 @@ const Home = () => {
             Edit <Code fontSize="xl">src/App.js</Code> and save to reload.
           </Text>
           <ConnectButton
-          onClickFunc={
-            !address
-              ? connect
-              : () => {
-                  setSelectedAccount(null);
-                  disconnect();
-                }
-          }
-          title={!address ? "Connect Wallet" : "Disconnect Wallet"}
-        />
+            onClickFunc={
+              !address
+                ? connect
+                : () => {
+                    setSelectedAccount(null);
+                    disconnect();
+                  }
+            }
+            title={!address ? 'Connect Wallet' : 'Disconnect Wallet'}
+          />
+          <Button onClick={getUserInfo}>Get Info</Button>
+          {selectedAccount && userInfo ? (
+            <AddFunds userAddress={selectedAccount} userInfo={userInfo}/>
+          ) : null}
         </VStack>
       </Grid>
     </Box>

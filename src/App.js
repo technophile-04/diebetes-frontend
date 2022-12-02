@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Home, Proposal } from './pages';
+import { CreateProposal, Home, Proposal } from './pages';
 
 function App() {
   return (
@@ -8,6 +8,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/:proposalAddress" element={<Proposal />} />
+        <Route path="/create-proposal" element={<CreateProposal />} />
       </Routes>
     </BrowserRouter>
   );

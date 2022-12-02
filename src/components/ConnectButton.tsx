@@ -1,4 +1,5 @@
-import React from "react";
+import { Button } from '@chakra-ui/react';
+import React from 'react';
 // import { CircularProgress } from "@material-ui/core";
 
 type ButtonProp = {
@@ -16,24 +17,22 @@ const ConnectButton: React.FC<ButtonProp> = ({
   children,
   style,
 }) => {
-
   return (
-    <button
+    <Button
       onClick={onClickFunc}
       // className={}
       disabled={isLoading}
       style={style}
+      rounded={'full'}
+      bg={'blue.400'}
+      color={'white'}
+      _hover={{
+        bg: 'blue.500',
+      }}
     >
-      {isLoading ? (
-        <>
-          
-          {" Loading"}
-        </>
-      ) : (
-        title
-      )}
+      {isLoading ? <>{' Loading'}</> : title}
       {children}
-    </button>
+    </Button>
   );
 };
 

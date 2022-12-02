@@ -4,6 +4,8 @@ import * as ReactDOM from 'react-dom/client';
 import App from './App';
 import { WagmiConfig, createClient, configureChains, chain } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
+import { Web3AuthProvider } from "./contexts/SocialLoginContext";
+import { SmartAccountProvider } from "./contexts/SmartAccountContext";
 
 const { chains, provider, webSocketProvider } = configureChains(
   [chain.mainnet, chain.optimism],
@@ -21,11 +23,15 @@ const root = ReactDOM.createRoot(container);
 
 root.render(
   <StrictMode>
-    <WagmiConfig client={client}>
-      <ColorModeScript />
-      <ChakraProvider theme={theme}>
-        <App />
-      </ChakraProvider>
-    </WagmiConfig>
+    <Web3AuthProvider>
+      <SmartAccountProvider>
+        <WagmiConfig client={client}>
+          <ColorModeScript />
+          <ChakraProvider theme={theme}>
+            <App />
+          </ChakraProvider>
+        </WagmiConfig>
+      </SmartAccountProvider>
+    </Web3AuthProvider>
   </StrictMode>
 );

@@ -17,8 +17,9 @@ import {
 } from '@chakra-ui/react';
 
 import { useToast } from '@chakra-ui/react';
+import storage from "../IPFS/storage"
 
-const Form1 = () => {
+const Form1 = params => {
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
   return (
@@ -44,6 +45,8 @@ const Form1 = () => {
               placeholder="www.example.com"
               focusBorderColor="brand.400"
               rounded="md"
+              value={params.title}
+              onChange={event => params.setTitle(event.target.value)}
             />
           </InputGroup>
         </FormControl>
@@ -67,15 +70,39 @@ const Form1 = () => {
             fontSize={{
               sm: 'sm',
             }}
+            value={params.desc}
+            onChange={event => params.setDesc(event.target.value)}
           />
           <FormHelperText>Brief description for your proposal.</FormHelperText>
+        </FormControl>
+        <FormControl as={GridItem} colSpan={[3, 2]}>
+          <FormLabel
+            fontSize="sm"
+            fontWeight="md"
+            color="gray.700"
+            _dark={{
+              color: 'gray.50',
+            }}
+          >
+            Target Funding
+          </FormLabel>
+          <InputGroup size="sm">
+            <Input
+              type="tel"
+              placeholder="10 ETH"
+              focusBorderColor="brand.400"
+              rounded="md"
+              value={params.target}
+              onChange={event => params.setTarget(event.target.value)}
+            />
+          </InputGroup>
         </FormControl>
       </SimpleGrid>
     </>
   );
 };
 
-const Form2 = () => {
+const Form2 = params => {
   return (
     <>
       <Heading w="100%" textAlign={'center'} fontWeight="normal" mb="2%">
@@ -104,6 +131,11 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          value={params.title2}
+          onChange={event => {
+            params.setTitle2(event.target.value);
+          }}
+          // onChange={}
         />
       </FormControl>
 
@@ -130,6 +162,10 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          value={params.benefit}
+          onChange={event => {
+            params.setBenefit(event.target.value);
+          }}
         />
       </FormControl>
 
@@ -156,6 +192,10 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          value={params.benefit2}
+          onChange={event => {
+            params.setBenefit2(event.target.value);
+          }}
         />
       </FormControl>
     </>
@@ -166,6 +206,29 @@ export default function CreateProposal() {
   const toast = useToast();
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(50);
+  const [title, setTitle] = useState('');
+  const [desc, setDesc] = useState('');
+  const [title2, setTitle2] = useState('');
+  const [benefit, setBenefit] = useState('');
+  const [benefit2, setBenefit2] = useState('');
+  const [target, setTarget] = useState('');
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [cid, setCid] = useState("")
+  async function onUploadClick() {
+    const cid = await storage(selectedImageFile,"research.pdf")
+    console.log(cid);
+    const metadata = {
+      proposalTitle: title,
+      description: desc,
+      NftTitle: title2,
+      benefit: benefit,
+      benefit2: benefit2,
+      cid: cid
+    };
+    console.log(metadata);
+    setCid(cid)
+  }
+
   return (
     <>
       <Box
@@ -184,9 +247,47 @@ export default function CreateProposal() {
           mx="5%"
           isAnimated
         ></Progress>
-        {step === 1 ? <Form1 /> : <Form2 />}
+        {step === 1 ? (
+          <Form1
+            title={title}
+            setTitle={setTitle}
+            desc={desc}
+            setDesc={setDesc}
+            target={target}
+            setTarget={setTarget}
+          />
+        ) : (
+          <Form2
+            title2={title2}
+            setTitle2={setTitle2}
+            benefit={benefit}
+            benefit2={benefit2}
+            setBenefit={setBenefit}
+            setBenefit2={setBenefit2}
+          />
+        )}
         <ButtonGroup mt="5%" w="100%">
           <Flex w="100%" justifyContent="space-between">
+            <Button
+              w="7rem"
+              isDisabled={step === 2}
+              onClick={() => {
+                document.querySelector('.input_pdf').click();
+              }}
+              colorScheme="blue"
+              variant="outline"
+            >
+              Upload
+            </Button>
+            <input
+              className="input_pdf"
+              accept="application/pdf"
+              type="file"
+              hidden
+              onChange={e => {
+                setSelectedImageFile(e.target.files[0]);
+              }}
+            />
             <Flex>
               <Button
                 onClick={() => {
@@ -224,6 +325,7 @@ export default function CreateProposal() {
                 colorScheme="blue"
                 variant="solid"
                 onClick={() => {
+                  onUploadClick()
                   toast({
                     title: 'Account created.',
                     description: "We've created your account for you.",

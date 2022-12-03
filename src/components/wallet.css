@@ -1,0 +1,22 @@
+.wallet-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
+    /* border: 2px solid black; */
+}
+
+.wallet-balance{
+    border: 2px solid black;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    padding:1%;
+}
+.wallet-address{
+    border: 2px solid black;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    padding:1%;
+}

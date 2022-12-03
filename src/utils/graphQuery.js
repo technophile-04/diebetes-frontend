@@ -21,5 +21,6 @@ export default async function graphQuery() {
     .query(querySchema)
     .toPromise()
     .then(result => result);
-  return data1;
+    console.log(data1.data);
+  return data1.data;
 }

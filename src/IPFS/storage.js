@@ -10,7 +10,7 @@ const metadataBlob = new Blob([JSON.stringify(metadataJson)])
 
 async function uploadToIpfs(metadataBlob, fileName) {
     // setLoading(true)
-    const token = process.env.NEXT_PUBLIC_WEB3_STORAGE
+    const token = process.env.Web3STORAGE_KEY
     const web3Client = new Web3Storage({ token: token })
 
     console.log("Getting Encrypted FIle and key...")

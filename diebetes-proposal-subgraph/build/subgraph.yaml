@@ -1,0 +1,32 @@
+specVersion: 0.0.4
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: ProposalContract
+    network: mumbai
+    source:
+      address: "0x7f630d00933c5646eabe4CA991Efb12F3BC527d8"
+      abi: ProposalContract
+      startBlock: 29468792
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Proposal
+        - Contributor
+        - Contribution
+      abis:
+        - name: ProposalContract
+          file: ProposalContract/abis/ProposalContract.json
+      eventHandlers:
+        - event: Pay(address,uint256,uint128)
+          handler: handlePay
+        - event: ProposalCreated(uint256,address,uint128,string)
+          handler: handleProposalCreated
+        - event: ResearchFindingAdded(uint256,string)
+          handler: handleResearchFindingAdded
+        - event: WithdrawContribution(address,uint256,uint256)
+          handler: handleWithdrawContribution
+      file: ProposalContract/ProposalContract.wasm

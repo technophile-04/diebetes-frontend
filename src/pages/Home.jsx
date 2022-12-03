@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -18,6 +18,10 @@ import AddFunds from '../components/AddFunds';
 import Testimonials from '../components/Testimonials';
 import Wallet from '../components/Wallet';
 import { Link } from 'react-router-dom';
+import SendNotificationButton from '../components/SendNotificationButton';
+import SmartAccount from '@biconomy/smart-account';
+import { ChainId } from '@biconomy/core-types';
+import graphQuery from '../utils/graphQuery';
 
 const Home = () => {
   const {
@@ -27,14 +31,19 @@ const Home = () => {
     connect,
     disconnect,
     getUserInfo,
+    web3Provider,
   } = useWeb3AuthContext();
   const {
     selectedAccount,
     loading: scwLoading,
     setSelectedAccount,
     balance: allTokensBalance,
+    // wallet
   } = useSmartAccountContext();
 
+  // const [signer, setSigner] = useState(wallet.getsigner())
+  const queryData = graphQuery();
+  console.log(queryData);
   console.log('address', address);
 
   return (
@@ -105,6 +114,7 @@ const Home = () => {
         left="0"
       />
       <Wallet />
+      {/* <SendNotificationButton signer={web3Provider}/> */}
     </Stack>
   );
 };

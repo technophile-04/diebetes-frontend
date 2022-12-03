@@ -8,7 +8,7 @@ import { Web3AuthProvider } from "./contexts/SocialLoginContext";
 import { SmartAccountProvider } from "./contexts/SmartAccountContext";
 
 const { chains, provider, webSocketProvider } = configureChains(
-  [chain.mainnet, chain.optimism],
+  [chain.polygonMumbai,chain.goerli],
   [publicProvider()]
 );
 

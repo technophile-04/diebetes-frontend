@@ -10,13 +10,10 @@ import {
   GridItem,
   FormLabel,
   Input,
-  Select,
   SimpleGrid,
-  InputLeftAddon,
   InputGroup,
   Textarea,
   FormHelperText,
-  InputRightElement,
 } from '@chakra-ui/react';
 
 import { useToast } from '@chakra-ui/react';

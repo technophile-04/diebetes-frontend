@@ -52,6 +52,12 @@ export function handleWithdrawContribution(
   entity.proposalId = event.params.proposalId;
   entity.amount =  entity.amount.minus(event.params.withdrawnAmount) ;
   entity.save();
+
+  let contributor = Contributor.load(event.params.contributor.toHexString())
+  if (!contributor) {
+    contributor = new Contributor(event.params.contributor.toHexString())
+  }
+  contributor.save()
 }
 
 // export function handleWithdrawFunding(event: WithdrawFundingEvent): void {

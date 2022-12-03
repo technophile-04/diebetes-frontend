@@ -1,6 +1,6 @@
 const channelAddress = process.env.CHANNEL_ADDRESS;
 
-const channel_optIn = (address) => {
+const channel_optIn = async (address) => {
     await PushAPI.channels.subscribe({
         signer: _signer,
         channelAddress: `eip155:5:${channelAddress}`, // channel address in CAIP
@@ -15,7 +15,7 @@ const channel_optIn = (address) => {
     })
 }
 
-const channel_optOut = (address) => {
+const channel_optOut = async (address) => {
     await PushAPI.channels.unsubscribe({
         signer: _signer,
         channelAddress: `eip155:5:${channelAddress}`, // channel address in CAIP

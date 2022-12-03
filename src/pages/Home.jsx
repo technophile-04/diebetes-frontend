@@ -16,6 +16,8 @@ import { useWeb3AuthContext } from '../contexts/SocialLoginContext';
 import ConnectButton from '../components/ConnectButton';
 import AddFunds from '../components/AddFunds';
 import Testimonials from '../components/Testimonials';
+import Wallet from '../components/Wallet';
+import { Link } from 'react-router-dom';
 import SendNotificationButton from '../components/SendNotificationButton';
 import SmartAccount from '@biconomy/smart-account';
 import { ChainId } from '@biconomy/core-types';
@@ -28,17 +30,19 @@ const Home = () => {
     userInfo,
     connect,
     disconnect,
-    getUserInfo, web3Provider
+    getUserInfo,
+    web3Provider,
   } = useWeb3AuthContext();
   const {
     selectedAccount,
     loading: scwLoading,
     setSelectedAccount,
+    balance: allTokensBalance,
     // wallet
   } = useSmartAccountContext();
 
   // const [signer, setSigner] = useState(wallet.getsigner())
-  const queryData = graphQuery()
+  const queryData = graphQuery();
   console.log(queryData);
   console.log('address', address);
 
@@ -79,13 +83,18 @@ const Home = () => {
                   !address
                     ? connect
                     : () => {
-                      setSelectedAccount(null);
-                      disconnect();
-                    }
+                        setSelectedAccount(null);
+                        disconnect();
+                      }
                 }
                 title={!address ? 'Connect Wallet' : 'Disconnect Wallet'}
+                isLoading={eoaLoading}
               />
-              <Button rounded={'full'}>How It Works</Button>
+              {address && (
+                <Link to="/create-proposal">
+                  <Button rounded={'full'}>Create Proposal</Button>
+                </Link>
+              )}
             </Stack>
           </Stack>
         </Flex>
@@ -104,6 +113,7 @@ const Home = () => {
         bottom="0"
         left="0"
       />
+      <Wallet />
       {/* <SendNotificationButton signer={web3Provider}/> */}
     </Stack>
   );

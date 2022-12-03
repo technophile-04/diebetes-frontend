@@ -13,12 +13,13 @@ type ButtonProp = {
 const ConnectButton: React.FC<ButtonProp> = ({
   title,
   onClickFunc,
-  isLoading = false,
+  isLoading,
   children,
   style,
 }) => {
   return (
     <Button
+      isLoading={isLoading}
       onClick={onClickFunc}
       // className={}
       disabled={isLoading}

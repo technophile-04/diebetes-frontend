@@ -1,3 +1,10 @@
+import * as PushAPI from "@pushprotocol/restapi";
+import * as ethers from "ethers";
+
+const PK = process.env.CHANNEL_PRIVATE_KEY;
+const Pkey = `0x${PK}`;
+const _signer = new ethers.Wallet(Pkey);
+
 const channelAddress = process.env.CHANNEL_ADDRESS;
 
 const channel_optIn = async (address) => {

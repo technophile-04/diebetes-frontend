@@ -79,9 +79,9 @@ const Home = () => {
                   !address
                     ? connect
                     : () => {
-                        setSelectedAccount(null);
-                        disconnect();
-                      }
+                      setSelectedAccount(null);
+                      disconnect();
+                    }
                 }
                 title={!address ? 'Connect Wallet' : 'Disconnect Wallet'}
               />

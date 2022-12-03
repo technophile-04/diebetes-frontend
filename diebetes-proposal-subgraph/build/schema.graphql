@@ -1,0 +1,33 @@
+type Proposal @entity {
+  id: ID!
+  proposer: Bytes! # address
+  fundingTarget: BigInt! # uint128
+  researchPaperCID: String! # string
+  researchFindingCID: String 
+}
+
+type Contribution @entity {
+  id: ID!
+  proposalId: BigInt!
+  amount: BigInt!
+  address: Contributor!
+}
+type Contributor @entity {
+  id: ID!
+  contributions: [Contribution!]! @derivedFrom(field: "address")
+  
+}
+
+
+# type WithdrawContribution @entity {
+#   id: ID!
+#   contributor: Bytes! # address
+#   proposalId: BigInt! # uint256
+#   withdrawnAmount: BigInt! # uint256
+# }
+
+# type WithdrawFunding @entity {
+#   id: ID!
+#   proposalId: BigInt! # uint256
+#   fundingAmount: BigInt! # uint128
+# }

@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+diebetes-proposal-subgraph/node_modules
+diebetesNfC-subgraph/node_modules
 .env
 /.pnp
 .pnp.js

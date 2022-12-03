@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -16,6 +16,9 @@ import { useWeb3AuthContext } from '../contexts/SocialLoginContext';
 import ConnectButton from '../components/ConnectButton';
 import AddFunds from '../components/AddFunds';
 import Testimonials from '../components/Testimonials';
+import SendNotificationButton from '../components/SendNotificationButton';
+import SmartAccount from '@biconomy/smart-account';
+import { ChainId } from '@biconomy/core-types';
 
 const Home = () => {
   const {
@@ -24,13 +27,16 @@ const Home = () => {
     userInfo,
     connect,
     disconnect,
-    getUserInfo,
+    getUserInfo, web3Provider
   } = useWeb3AuthContext();
   const {
     selectedAccount,
     loading: scwLoading,
     setSelectedAccount,
+    // wallet
   } = useSmartAccountContext();
+
+  // const [signer, setSigner] = useState(wallet.getsigner())
 
   console.log('address', address);
 
@@ -96,6 +102,7 @@ const Home = () => {
         bottom="0"
         left="0"
       />
+      {/* <SendNotificationButton signer={web3Provider}/> */}
     </Stack>
   );
 };

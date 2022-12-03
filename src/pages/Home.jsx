@@ -19,6 +19,7 @@ import Testimonials from '../components/Testimonials';
 import SendNotificationButton from '../components/SendNotificationButton';
 import SmartAccount from '@biconomy/smart-account';
 import { ChainId } from '@biconomy/core-types';
+import graphQuery from '../utils/graphQuery';
 
 const Home = () => {
   const {
@@ -37,7 +38,8 @@ const Home = () => {
   } = useSmartAccountContext();
 
   // const [signer, setSigner] = useState(wallet.getsigner())
-
+  const queryData = graphQuery()
+  console.log(queryData);
   console.log('address', address);
 
   return (

@@ -75,7 +75,7 @@ const Wallet = () => {
     getAccountTestBalance();
   }, [state?.address]);
 
-  if (!address) {
+  if (!state) {
     return null;
   }
 
@@ -84,7 +84,9 @@ const Wallet = () => {
       <Text color="black" border="2px" borderColor="black">
         {isFetchingTestBalance ? 'loading...' : testBalance}
       </Text>
-      <Text color="black">{truncateEthAddress(address)}</Text>
+      <Text color="black">
+        {state.address && truncateEthAddress(state.address)}
+      </Text>
     </HStack>
   );
 };

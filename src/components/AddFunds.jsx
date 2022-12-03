@@ -7,7 +7,7 @@ export default function AddFunds(params) {
     const transak = new Transak('STAGING', {
       walletAddress: params.userAddress || '',
       userData: {
-        firstName: params.userInfo?.name || ' ',
+        firstName: params.userInfo?.name || '',
         email: params.userInfo?.email || '',
       },
     });

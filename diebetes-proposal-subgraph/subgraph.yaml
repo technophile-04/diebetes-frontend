@@ -6,7 +6,7 @@ dataSources:
     name: ProposalContract
     network: mumbai
     source:
-      address: "0x7AE95B917E7820233321B1bB0a87d9B7965A3867"
+      address: "0x7f630d00933c5646eabe4CA991Efb12F3BC527d8"
       abi: ProposalContract
       startBlock: 29468792
     mapping:

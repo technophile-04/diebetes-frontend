@@ -1,4 +1,4 @@
-import { BigInt } from '@graphprotocol/graph-ts';
+import { BigDecimal, bigInt, BigInt } from '@graphprotocol/graph-ts';
 import {
   Pay as PayEvent,
   ProposalCreated as ProposalCreatedEvent,
@@ -17,6 +17,17 @@ export function handlePay(event: PayEvent): void {
   entity.proposalId = event.params.proposalId;
   entity.amount = event.params.amount;
   entity.save();
+  
+  let proposal = Proposal.load(event.params.proposalId.toHexString())
+  if (!proposal) {
+    proposal = new Proposal(event.params.proposalId.toHexString())
+  }
+  if (!proposal.currentFunding) {
+    proposal.currentFunding = event.params.amount
+  } else {
+    proposal.currentFunding = proposal.currentFunding.plus(event.params.amount)
+  }
+  proposal.save()
 }
 
 export function handleProposalCreated(event: ProposalCreatedEvent): void {
@@ -27,6 +38,7 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
   entity.proposer = event.params.proposer;
   entity.fundingTarget = event.params.fundingTarget;
   entity.researchPaperCID = event.params.researchPaperCID;
+  entity.currentFunding = event.params.fundingTarget.minus(event.params.fundingTarget)
   entity.save();
 }
 

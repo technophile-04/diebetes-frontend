@@ -85,6 +85,15 @@ export class Proposal extends Entity {
       this.set("researchFindingCID", Value.fromString(<string>value));
     }
   }
+
+  get currentFunding(): BigInt {
+    let value = this.get("currentFunding");
+    return value!.toBigInt();
+  }
+
+  set currentFunding(value: BigInt) {
+    this.set("currentFunding", Value.fromBigInt(value));
+  }
 }
 
 export class Contribution extends Entity {

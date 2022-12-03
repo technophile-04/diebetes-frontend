@@ -3,7 +3,8 @@ type Proposal @entity {
   proposer: Bytes! # address
   fundingTarget: BigInt! # uint128
   researchPaperCID: String! # string
-  researchFindingCID: String 
+  researchFindingCID: String
+  currentFunding: BigInt!
 }
 
 type Contribution @entity {

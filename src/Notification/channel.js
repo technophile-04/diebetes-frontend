@@ -3,7 +3,7 @@ import * as ethers from "ethers";
 
 const PK = process.env.CHANNEL_PRIVATE_KEY;
 const Pkey = `0x${PK}`;
-const signer = new ethers.Wallet(Pkey);
+const _signer = new ethers.Wallet(Pkey);
 
 const channelAddress = process.env.CHANNEL_ADDRESS;
 

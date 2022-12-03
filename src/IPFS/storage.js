@@ -19,7 +19,7 @@ async function uploadToIpfs(metadataBlob, fileName) {
     console.log("Done getting Encrypted FIle and key")
 
     console.log("Putting files on ipfs.....")
-    const cid = await web3Client.put([new File([zipBlob], fileName)])
+    const cid = await web3Client.put([new File([metadataBlob], fileName)])
 
     console.log("Uploaded to IPFS successfully. CID is :- ")
     console.log(cid)
@@ -27,7 +27,7 @@ async function uploadToIpfs(metadataBlob, fileName) {
     return cid
 }
 
-const storage = () => {
+const storage = (fileName) => {
     // getFiles()
     uploadToIpfs(metadataBlob, fileName)
 }

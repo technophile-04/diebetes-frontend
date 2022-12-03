@@ -1,9 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { ethers } from "ethers";
-import SmartAccount from "@biconomy/smart-account";
-import { SmartAccountState, SmartAccountVersion } from "@biconomy/core-types";
-import { supportedChains, activeChainId } from "../utils/chainConfig";
-import { useWeb3AuthContext } from "./SocialLoginContext";
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { ethers } from 'ethers';
+import SmartAccount from '@biconomy/smart-account';
+import { SmartAccountState, SmartAccountVersion } from '@biconomy/core-types';
+import { supportedChains, activeChainId } from '../utils/chainConfig';
+import { useWeb3AuthContext } from './SocialLoginContext';
+import testABI from '../deployments/mumbai/TestToken.json';
 
 export const ChainId = {
   MAINNET: 1, // Ethereum
@@ -33,6 +34,7 @@ type smartAccountContextType = {
   setSelectedAccount: React.Dispatch<
     React.SetStateAction<ISmartAccount | null>
   >;
+  isFetchingTestBalance: boolean;
   getSmartAccount: () => Promise<string>;
   getSmartAccountBalance: () => Promise<string>;
 };
@@ -51,15 +53,16 @@ export const SmartAccountContext = React.createContext<smartAccountContextType>(
     selectedAccount: null,
     smartAccountsArray: [],
     setSelectedAccount: () => {},
-    getSmartAccount: () => Promise.resolve(""),
-    getSmartAccountBalance: () => Promise.resolve(""),
+    getSmartAccount: () => Promise.resolve(''),
+    getSmartAccountBalance: () => Promise.resolve(''),
+    isFetchingTestBalance: false,
   }
 );
 export const useSmartAccountContext = () => useContext(SmartAccountContext);
 
 // Provider
 export const SmartAccountProvider = ({ children }: any) => {
-  const { provider, address } = useWeb3AuthContext();
+  const { provider, address, ethersProvider } = useWeb3AuthContext();
   const [wallet, setWallet] = useState<SmartAccount | null>(null);
   const [state, setState] = useState<SmartAccountState | null>(null);
   const [selectedAccount, setSelectedAccount] = useState<ISmartAccount | null>(
@@ -73,15 +76,16 @@ export const SmartAccountProvider = ({ children }: any) => {
     alltokenBalances: [],
   });
   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
+  const [isFetchingTestBalance, setIsFetchingTestBalance] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const getSmartAccount = useCallback(async () => {
-    if (!provider || !address) return "Wallet not connected";
+    if (!provider || !address) return 'Wallet not connected';
 
     try {
       setLoading(true);
       const walletProvider = new ethers.providers.Web3Provider(provider);
-      console.log("walletProvider", walletProvider);
+      console.log('walletProvider', walletProvider);
       // New instance, all config params are optional
       const wallet = new SmartAccount(walletProvider, {
         activeNetworkId: activeChainId,
@@ -89,7 +93,6 @@ export const SmartAccountProvider = ({ children }: any) => {
         networkConfig: [
           {
             chainId: ChainId.POLYGON_MUMBAI,
-            
           },
           {
             chainId: ChainId.POLYGON_MAINNET,
@@ -97,33 +100,33 @@ export const SmartAccountProvider = ({ children }: any) => {
           },
         ],
       });
-      console.log("wallet", wallet);
+      console.log('wallet', wallet);
 
       // Wallet initialization to fetch wallet info
       const smartAccount = await wallet.init();
       setWallet(wallet);
-      console.info("smartAccount", smartAccount);
+      console.info('smartAccount', smartAccount);
 
-      smartAccount.on("txHashGenerated", (response: any) => {
+      smartAccount.on('txHashGenerated', (response: any) => {
         console.log(
-          "txHashGenerated event received in AddLP via emitter",
+          'txHashGenerated event received in AddLP via emitter',
           response
         );
       });
 
-      smartAccount.on("txHashChanged", (response: any) => {
+      smartAccount.on('txHashChanged', (response: any) => {
         console.log(
-          "txHashChanged event received in AddLP via emitter",
+          'txHashChanged event received in AddLP via emitter',
           response
         );
       });
 
-      smartAccount.on("txMined", (response: any) => {
-        console.log("txMined event received in AddLP via emitter", response);
+      smartAccount.on('txMined', (response: any) => {
+        console.log('txMined event received in AddLP via emitter', response);
       });
 
-      smartAccount.on("error", (response: any) => {
-        console.log("error event received in AddLP via emitter", response);
+      smartAccount.on('error', (response: any) => {
+        console.log('error event received in AddLP via emitter', response);
       });
 
       // get all smart account versions available and update in state
@@ -131,11 +134,15 @@ export const SmartAccountProvider = ({ children }: any) => {
         chainId: activeChainId,
         owner: address,
       });
-      console.info("getSmartAccountsByOwner", data);
+      console.info('getSmartAccountsByOwner', data);
       const accountData = [];
       for (let i = 0; i < data.length; ++i) {
         accountData.push(data[i]);
       }
+      console.log(
+        '⚡️ ~ file: SmartAccountContext.tsx:160 ~ getSmartAccount ~ accountData',
+        accountData
+      );
       setSmartAccountsArray(accountData);
       // set the first wallet version as default
       if (accountData.length) {
@@ -148,10 +155,10 @@ export const SmartAccountProvider = ({ children }: any) => {
       // get address, isDeployed and other data
       const state = await smartAccount.getSmartAccountState();
       setState(state);
-      console.info("getSmartAccountState", state);
+      console.info('getSmartAccountState', state);
 
       setLoading(false);
-      return "";
+      return '';
     } catch (error: any) {
       setLoading(false);
       console.error({ getSmartAccount: error });
@@ -160,8 +167,8 @@ export const SmartAccountProvider = ({ children }: any) => {
   }, [provider, address]);
 
   const getSmartAccountBalance = async () => {
-    if (!provider || !address) return "Wallet not connected";
-    if (!state || !wallet) return "Init Smart Account First";
+    if (!provider || !address) return 'Wallet not connected';
+    if (!state || !wallet) return 'Init Smart Account First';
 
     try {
       setIsFetchingBalance(true);
@@ -172,19 +179,19 @@ export const SmartAccountProvider = ({ children }: any) => {
       const balanceParams = {
         chainId: activeChainId,
         eoaAddress: state.address,
-        tokenAddresses: [],
+        tokenAddresses: ['0xeDb95D8037f769B72AAab41deeC92903A98C9E16'],
       };
       const balFromSdk = await wallet.getAlltokenBalances(balanceParams);
-      console.info("getAlltokenBalances", balFromSdk);
+      console.info('getAlltokenBalances', balFromSdk);
 
       const usdBalFromSdk = await wallet.getTotalBalanceInUsd(balanceParams);
-      console.info("getTotalBalanceInUsd", usdBalFromSdk);
+      console.info('getTotalBalanceInUsd', usdBalFromSdk);
       setBalance({
         totalBalanceInUsd: usdBalFromSdk.data.totalBalance,
         alltokenBalances: balFromSdk.data,
       });
       setIsFetchingBalance(false);
-      return "";
+      return '';
     } catch (error: any) {
       setIsFetchingBalance(false);
       console.error({ getSmartAccountBalance: error });
@@ -194,7 +201,7 @@ export const SmartAccountProvider = ({ children }: any) => {
 
   useEffect(() => {
     if (wallet && selectedAccount) {
-      console.log("setSmartAccountVersion", selectedAccount);
+      console.log('setSmartAccountVersion', selectedAccount);
       wallet.setSmartAccountVersion(
         selectedAccount.version as SmartAccountVersion
       );
@@ -219,6 +226,7 @@ export const SmartAccountProvider = ({ children }: any) => {
         setSelectedAccount,
         getSmartAccount,
         getSmartAccountBalance,
+        isFetchingTestBalance,
       }}
     >
       {children}

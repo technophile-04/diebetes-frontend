@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Box,
   Button,
@@ -16,6 +16,8 @@ import { useWeb3AuthContext } from '../contexts/SocialLoginContext';
 import ConnectButton from '../components/ConnectButton';
 import AddFunds from '../components/AddFunds';
 import Testimonials from '../components/Testimonials';
+import Wallet from '../components/Wallet';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   const {
@@ -30,6 +32,7 @@ const Home = () => {
     selectedAccount,
     loading: scwLoading,
     setSelectedAccount,
+    balance: allTokensBalance,
   } = useSmartAccountContext();
 
   console.log('address', address);
@@ -76,8 +79,13 @@ const Home = () => {
                       }
                 }
                 title={!address ? 'Connect Wallet' : 'Disconnect Wallet'}
+                isLoading={eoaLoading}
               />
-              <Button rounded={'full'}>How It Works</Button>
+              {address && (
+                <Link to="/create-proposal">
+                  <Button rounded={'full'}>Create Proposal</Button>
+                </Link>
+              )}
             </Stack>
           </Stack>
         </Flex>
@@ -96,6 +104,7 @@ const Home = () => {
         bottom="0"
         left="0"
       />
+      <Wallet />
     </Stack>
   );
 };

@@ -1,15 +1,13 @@
 import * as PushAPI from "@pushprotocol/restapi";
 import * as ethers from "ethers";
-import { useSmartAccountContext } from "../contexts/SmartAccountContext";
 
 const PK = process.env.CHANNEL_PRIVATE_KEY;
 const Pkey = `0x${PK}`;
 const signer = new ethers.Wallet(Pkey);
 
-const { address } = useSmartAccountContext();
 const channelAddress = process.env.CHANNEL_ADDRESS;
 
-export const sendNotification = async (title, description, msg) => {
+export const sendNotification = async (address, title, description, msg) => {
     try {
         const apiResponse = await PushAPI.payloads.sendNotification({
             signer,

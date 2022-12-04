@@ -17,7 +17,11 @@ import {
 } from '@chakra-ui/react';
 
 import { useToast } from '@chakra-ui/react';
-import storage from "../IPFS/storage"
+import storage from '../IPFS/storage';
+import { useSmartAccountContext } from '../contexts/SmartAccountContext';
+import { ethers } from 'ethers';
+import diabeticABI from '../deployments/mumbai/DiebeticFunding.json';
+import testABI from '../deployments/mumbai/TestToken.json';
 
 const Form1 = params => {
   const [show, setShow] = React.useState(false);
@@ -88,7 +92,7 @@ const Form1 = params => {
           </FormLabel>
           <InputGroup size="sm">
             <Input
-              type="tel"
+              type="text"
               placeholder="10 ETH"
               focusBorderColor="brand.400"
               rounded="md"
@@ -213,9 +217,67 @@ export default function CreateProposal() {
   const [benefit2, setBenefit2] = useState('');
   const [target, setTarget] = useState('');
   const [selectedImageFile, setSelectedImageFile] = useState(null);
-  const [cid, setCid] = useState("")
+  const [cid, setCid] = useState('');
+  const [proposalLoading, setProposalLoading] = useState(false);
+
+  const { mainSmartAccount: smartAccount } = useSmartAccountContext();
+
+  const createProposal = async () => {
+    try {
+      setProposalLoading(true);
+      // const erc20Interface = new ethers.utils.Interface(testABI.abi);
+      const dappInterface = new ethers.utils.Interface(diabeticABI.abi);
+
+      const txs = [];
+
+      const dappContractAddress = diabeticABI.address;
+
+      const data1 = dappInterface.encodeFunctionData('createFundingProposal', [
+        ethers.utils.parseUnits(target, 'ether'),
+        cid,
+      ]);
+
+      const tx1 = {
+        to: dappContractAddress,
+        data: data1,
+      };
+
+      txs.push(tx1);
+
+      const response = await smartAccount.sendGaslessTransactionBatch({
+        transactions: txs,
+      });
+      console.log(
+        '⚡️ ~ file: CreateProposal2.jsx:215 ~ createProposal ~ response',
+        response
+      );
+
+      toast({
+        title: 'Proposal created.',
+        description: 'Your proposal has been created',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      });
+
+      setProposalLoading(false);
+
+      console.log(response);
+    } catch (error) {
+      setProposalLoading(false);
+      toast({
+        title: 'Oops an error occured.',
+        description: 'we ran into an error :(',
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+      });
+      console.log(error);
+    }
+  };
+
   async function onUploadClick() {
-    const cid = await storage(selectedImageFile,"research.pdf")
+    const cid = await storage(selectedImageFile, 'research.pdf');
     console.log(cid);
     const metadata = {
       proposalTitle: title,
@@ -223,10 +285,10 @@ export default function CreateProposal() {
       NftTitle: title2,
       benefit: benefit,
       benefit2: benefit2,
-      cid: cid
+      cid: cid,
     };
     console.log(metadata);
-    setCid(cid)
+    setCid(cid);
   }
 
   return (
@@ -325,7 +387,7 @@ export default function CreateProposal() {
                 colorScheme="blue"
                 variant="solid"
                 onClick={() => {
-                  onUploadClick()
+                  onUploadClick();
                   toast({
                     title: 'Account created.',
                     description: "We've created your account for you.",

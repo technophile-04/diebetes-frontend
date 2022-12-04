@@ -106,6 +106,7 @@ const Home = () => {
                   <Button rounded={'full'}>Create Proposal</Button>
                 </Link>
               )}
+              {address && <AddFunds />}
             </Stack>
           </Stack>
         </Flex>

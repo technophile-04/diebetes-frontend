@@ -22,6 +22,7 @@ import SendNotificationButton from '../components/SendNotificationButton';
 import SmartAccount from '@biconomy/smart-account';
 import { ChainId } from '@biconomy/core-types';
 import graphQuery from '../utils/graphQuery';
+import "./Home.css"
 
 const Home = () => {
   const {
@@ -42,9 +43,20 @@ const Home = () => {
   } = useSmartAccountContext();
 
   // const [signer, setSigner] = useState(wallet.getsigner())
-  const queryData = graphQuery();
-  console.log(queryData);
+  const [graphData, setgraphData] = useState()
+
+  // const queryData = graphQuery();
+  // console.log("hellllllll", queryData);
   console.log('address', address);
+
+
+  useEffect(() => {
+    (async () => {
+      const data1 = await graphQuery()
+      setgraphData(data1.proposals)
+      console.log("-------------", data1)
+    })()
+  }, [])
 
   return (
     <Stack spacing={18} position="relative" pb={12}>
@@ -83,9 +95,9 @@ const Home = () => {
                   !address
                     ? connect
                     : () => {
-                        setSelectedAccount(null);
-                        disconnect();
-                      }
+                      setSelectedAccount(null);
+                      disconnect();
+                    }
                 }
                 title={!address ? 'Connect Wallet' : 'Disconnect Wallet'}
                 isLoading={eoaLoading}
@@ -106,6 +118,16 @@ const Home = () => {
           />
         </Flex>
       </Stack>
+      <div className='wrap-container'>
+        <h1 className='h1-tag'>List of All Top Proposals</h1>
+        {/* <button className='view-btn' onClick={getQueyData()}>View Proposals</button> */}
+        {graphData ? graphData.map(proposal => (
+          <div className='proposal-box'>
+            <p>Id - {proposal.id}</p>
+            <p>Proposer Name - {proposal.proposer}</p>
+          </div>
+        )) : null}
+      </div>
       <Testimonials />
       <ColorModeSwitcher
         justifySelf="flex-end"

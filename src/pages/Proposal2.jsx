@@ -45,8 +45,8 @@ const Proposal2 = () => {
       const tokenAddress = testABI.address;
 
       const data1 = erc20Interface.encodeFunctionData('approve', [
-        ethers.utils.parseUnits(fundAmount, 'ether'),
         dappContractAddress,
+        ethers.utils.parseUnits(fundAmount, 'ether'),
       ]);
 
       const tx1 = {
@@ -133,7 +133,7 @@ const Proposal2 = () => {
                 fontWeight={300}
                 fontSize={'2xl'}
               >
-                Target Fund: Rs 2Lac
+                Target Fund: 5 USDC
               </Text>
             </Box>
 
@@ -164,12 +164,6 @@ const Proposal2 = () => {
                   <List spacing={2}>
                     <ListItem>Chronograph</ListItem>
                     <ListItem>Master Chronometer Certified</ListItem>{' '}
-                    <ListItem>Tachymeter</ListItem>
-                  </List>
-                  <List spacing={2}>
-                    <ListItem>Anti‑magnetic</ListItem>
-                    <ListItem>Chronometer</ListItem>
-                    <ListItem>Small seconds</ListItem>
                   </List>
                 </SimpleGrid>
               </Box>

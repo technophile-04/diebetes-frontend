@@ -5,6 +5,7 @@ import { SmartAccountState, SmartAccountVersion } from '@biconomy/core-types';
 import { supportedChains, activeChainId } from '../utils/chainConfig';
 import { useWeb3AuthContext } from './SocialLoginContext';
 import testABI from '../deployments/mumbai/TestToken.json';
+import { useToast } from '@chakra-ui/react';
 
 export const ChainId = {
   MAINNET: 1, // Ethereum
@@ -37,6 +38,7 @@ type smartAccountContextType = {
   isFetchingTestBalance: boolean;
   getSmartAccount: () => Promise<string>;
   getSmartAccountBalance: () => Promise<string>;
+  mainSmartAccount: SmartAccount | null;
 };
 
 // Context
@@ -56,6 +58,7 @@ export const SmartAccountContext = React.createContext<smartAccountContextType>(
     getSmartAccount: () => Promise.resolve(''),
     getSmartAccountBalance: () => Promise.resolve(''),
     isFetchingTestBalance: false,
+    mainSmartAccount: null,
   }
 );
 export const useSmartAccountContext = () => useContext(SmartAccountContext);
@@ -63,6 +66,7 @@ export const useSmartAccountContext = () => useContext(SmartAccountContext);
 // Provider
 export const SmartAccountProvider = ({ children }: any) => {
   const { provider, address, ethersProvider } = useWeb3AuthContext();
+  const toast = useToast();
   const [wallet, setWallet] = useState<SmartAccount | null>(null);
   const [state, setState] = useState<SmartAccountState | null>(null);
   const [selectedAccount, setSelectedAccount] = useState<ISmartAccount | null>(
@@ -78,6 +82,9 @@ export const SmartAccountProvider = ({ children }: any) => {
   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
   const [isFetchingTestBalance, setIsFetchingTestBalance] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [mainSmartAccount, setMainSmartAccount] = useState<null | SmartAccount>(
+    null
+  );
 
   const getSmartAccount = useCallback(async () => {
     if (!provider || !address) return 'Wallet not connected';
@@ -93,10 +100,10 @@ export const SmartAccountProvider = ({ children }: any) => {
         networkConfig: [
           {
             chainId: ChainId.POLYGON_MUMBAI,
+            dappAPIKey: '59fRCMXvk.8a1652f0-b522-4ea7-b296-98628499aee3',
           },
           {
             chainId: ChainId.POLYGON_MAINNET,
-            // dappAPIKey: todo
           },
         ],
       });
@@ -105,6 +112,7 @@ export const SmartAccountProvider = ({ children }: any) => {
       // Wallet initialization to fetch wallet info
       const smartAccount = await wallet.init();
       setWallet(wallet);
+      setMainSmartAccount(smartAccount);
       console.info('smartAccount', smartAccount);
 
       smartAccount.on('txHashGenerated', (response: any) => {
@@ -123,6 +131,14 @@ export const SmartAccountProvider = ({ children }: any) => {
 
       smartAccount.on('txMined', (response: any) => {
         console.log('txMined event received in AddLP via emitter', response);
+        toast({
+          title: 'Transaction minned',
+          description: '🔥 Your transaction was mined on blockchain!',
+          position: 'top-right',
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        });
       });
 
       smartAccount.on('error', (response: any) => {
@@ -227,6 +243,7 @@ export const SmartAccountProvider = ({ children }: any) => {
         getSmartAccount,
         getSmartAccountBalance,
         isFetchingTestBalance,
+        mainSmartAccount,
       }}
     >
       {children}

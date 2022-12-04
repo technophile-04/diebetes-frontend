@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import WorldcoinIntegrationButton from '../components/WorldcoinIntegrationButton';
 import {
   Box,
@@ -15,29 +15,22 @@ import {
   useColorModeValue,
   List,
   ListItem,
+  Input,
 } from '@chakra-ui/react';
-import ProposalImage from "../img/proposal1.jpg";
-import { Chat } from "@pushprotocol/uiweb";
-import { useParams } from 'react-router-dom';
+import ProposalImage from '../img/proposal1.jpg';
+import { Chat } from '@pushprotocol/uiweb';
 
 const Proposal = () => {
-  const {proposalAddress} = useParams()
-  console.log("Proposal Address" + proposalAddress);
-  // function name(params) {
-    
-  // }
-  // const testContract = new ethers.Contract(
-  //   testABI.address,
-  //   testABI.abi,
-  //   ethersProvider
-  // );
+  const [fundAmount, setfundAmount] = useState('');
+
   return (
     <div>
       <Container maxW={'7xl'}>
         <SimpleGrid
           columns={{ base: 1, lg: 2 }}
           spacing={{ base: 8, md: 10 }}
-          py={{ base: 18, md: 24 }}>
+          py={{ base: 18, md: 24 }}
+        >
           <Flex>
             <Image
               rounded={'md'}
@@ -54,13 +47,15 @@ const Proposal = () => {
               <Heading
                 lineHeight={1.1}
                 fontWeight={600}
-                fontSize={{ base: '2xl', sm: '4xl', lg: '5xl' }}>
+                fontSize={{ base: '2xl', sm: '4xl', lg: '5xl' }}
+              >
                 Making Life Better
               </Heading>
               <Text
                 color={useColorModeValue('gray.900', 'gray.400')}
                 fontWeight={300}
-                fontSize={'2xl'}>
+                fontSize={'2xl'}
+              >
                 Target Fund: Rs 2Lac
               </Text>
             </Box>
@@ -72,11 +67,10 @@ const Proposal = () => {
                 <StackDivider
                   borderColor={useColorModeValue('gray.200', 'gray.600')}
                 />
-              }>
+              }
+            >
               <VStack spacing={{ base: 4, sm: 6 }}>
-                <Text fontSize={'lg'}>
-                  Proposal Description
-                </Text>
+                <Text fontSize={'lg'}>Proposal Description</Text>
               </VStack>
               <Box>
                 <Text
@@ -84,7 +78,8 @@ const Proposal = () => {
                   color={useColorModeValue('yellow.500', 'yellow.300')}
                   fontWeight={'500'}
                   textTransform={'uppercase'}
-                  mb={'4'}>
+                  mb={'4'}
+                >
                   Benefites
                 </Text>
 
@@ -102,6 +97,14 @@ const Proposal = () => {
                 </SimpleGrid>
               </Box>
             </Stack>
+            <Input
+              type="text"
+              placeholder="10 ETH"
+              focusBorderColor="brand.400"
+              rounded="md"
+              value={fundAmount}
+              onChange={event => setfundAmount(event.target.value)}
+            />
             <Button
               rounded={'none'}
               w={'full'}
@@ -114,7 +117,8 @@ const Proposal = () => {
               _hover={{
                 transform: 'translateY(2px)',
                 boxShadow: 'lg',
-              }}>
+              }}
+            >
               Fund
             </Button>
           </Stack>

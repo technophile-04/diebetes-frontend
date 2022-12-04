@@ -17,13 +17,13 @@ import {
 } from '@chakra-ui/react';
 
 import { useToast } from '@chakra-ui/react';
-import storage from '../IPFS/storage';
-import { useSmartAccountContext } from '../contexts/SmartAccountContext';
-import { ethers } from 'ethers';
 import diabeticABI from '../deployments/mumbai/DiebeticFunding.json';
+import { useSmartAccountContext } from '../contexts/SmartAccountContext';
+import { useWeb3AuthContext } from '../contexts/SocialLoginContext';
 import testABI from '../deployments/mumbai/TestToken.json';
+import { ethers } from 'ethers';
 
-const Form1 = params => {
+const Form1 = () => {
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
   return (
@@ -49,8 +49,6 @@ const Form1 = params => {
               placeholder="www.example.com"
               focusBorderColor="brand.400"
               rounded="md"
-              value={params.title}
-              onChange={event => params.setTitle(event.target.value)}
             />
           </InputGroup>
         </FormControl>
@@ -74,39 +72,15 @@ const Form1 = params => {
             fontSize={{
               sm: 'sm',
             }}
-            value={params.desc}
-            onChange={event => params.setDesc(event.target.value)}
           />
           <FormHelperText>Brief description for your proposal.</FormHelperText>
-        </FormControl>
-        <FormControl as={GridItem} colSpan={[3, 2]}>
-          <FormLabel
-            fontSize="sm"
-            fontWeight="md"
-            color="gray.700"
-            _dark={{
-              color: 'gray.50',
-            }}
-          >
-            Target Funding
-          </FormLabel>
-          <InputGroup size="sm">
-            <Input
-              type="text"
-              placeholder="10 ETH"
-              focusBorderColor="brand.400"
-              rounded="md"
-              value={params.target}
-              onChange={event => params.setTarget(event.target.value)}
-            />
-          </InputGroup>
         </FormControl>
       </SimpleGrid>
     </>
   );
 };
 
-const Form2 = params => {
+const Form2 = () => {
   return (
     <>
       <Heading w="100%" textAlign={'center'} fontWeight="normal" mb="2%">
@@ -135,11 +109,6 @@ const Form2 = params => {
           size="sm"
           w="full"
           rounded="md"
-          value={params.title2}
-          onChange={event => {
-            params.setTitle2(event.target.value);
-          }}
-          // onChange={}
         />
       </FormControl>
 
@@ -166,10 +135,6 @@ const Form2 = params => {
           size="sm"
           w="full"
           rounded="md"
-          value={params.benefit}
-          onChange={event => {
-            params.setBenefit(event.target.value);
-          }}
         />
       </FormControl>
 
@@ -196,10 +161,6 @@ const Form2 = params => {
           size="sm"
           w="full"
           rounded="md"
-          value={params.benefit2}
-          onChange={event => {
-            params.setBenefit2(event.target.value);
-          }}
         />
       </FormControl>
     </>
@@ -210,15 +171,6 @@ export default function CreateProposal() {
   const toast = useToast();
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(50);
-  const [title, setTitle] = useState('');
-  const [desc, setDesc] = useState('');
-  const [title2, setTitle2] = useState('');
-  const [benefit, setBenefit] = useState('');
-  const [benefit2, setBenefit2] = useState('');
-  const [target, setTarget] = useState('');
-  const [selectedImageFile, setSelectedImageFile] = useState(null);
-  const [cid, setCid] = useState('');
-  const [metaCid, setMetaCid] = useState('');
   const [proposalLoading, setProposalLoading] = useState(false);
 
   const { mainSmartAccount: smartAccount } = useSmartAccountContext();
@@ -226,24 +178,37 @@ export default function CreateProposal() {
   const createProposal = async () => {
     try {
       setProposalLoading(true);
-      // const erc20Interface = new ethers.utils.Interface(testABI.abi);
+      const erc20Interface = new ethers.utils.Interface(testABI.abi);
       const dappInterface = new ethers.utils.Interface(diabeticABI.abi);
 
       const txs = [];
 
       const dappContractAddress = diabeticABI.address;
+      const tokenAddress = testABI.address;
 
-      const data1 = dappInterface.encodeFunctionData('createFundingProposal', [
-        ethers.utils.parseUnits(target, 'ether'),
-        cid,
+      const data1 = erc20Interface.encodeFunctionData('approve', [
+        dappContractAddress,
+        ethers.utils.parseUnits('50', 'ether'),
       ]);
 
       const tx1 = {
-        to: dappContractAddress,
+        to: tokenAddress,
         data: data1,
       };
 
       txs.push(tx1);
+
+      const data2 = dappInterface.encodeFunctionData('createFundingProposal', [
+        ethers.utils.parseUnits('3', 'ether'),
+        'bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi',
+      ]);
+
+      const tx2 = {
+        to: dappContractAddress,
+        data: data2,
+      };
+
+      txs.push(tx2);
 
       const response = await smartAccount.sendGaslessTransactionBatch({
         transactions: txs,
@@ -277,26 +242,6 @@ export default function CreateProposal() {
     }
   };
 
-  async function onUploadClick() {
-    const cid = await storage(selectedImageFile, 'research.pdf');
-    console.log(cid);
-    const metadata = {
-      proposalTitle: title,
-      description: desc,
-      NftTitle: title2,
-      benefit: benefit,
-      benefit2: benefit2,
-      cid: cid,
-    };
-    console.log(metadata);
-    setCid(cid);
-    const mCid = await storage(
-      new Blob(JSON.stringify(metadata)),
-      'metadata.json'
-    );
-    setMetaCid(mCid);
-  }
-
   return (
     <>
       <Box
@@ -315,47 +260,9 @@ export default function CreateProposal() {
           mx="5%"
           isAnimated
         ></Progress>
-        {step === 1 ? (
-          <Form1
-            title={title}
-            setTitle={setTitle}
-            desc={desc}
-            setDesc={setDesc}
-            target={target}
-            setTarget={setTarget}
-          />
-        ) : (
-          <Form2
-            title2={title2}
-            setTitle2={setTitle2}
-            benefit={benefit}
-            benefit2={benefit2}
-            setBenefit={setBenefit}
-            setBenefit2={setBenefit2}
-          />
-        )}
+        {step === 1 ? <Form1 /> : <Form2 />}
         <ButtonGroup mt="5%" w="100%">
           <Flex w="100%" justifyContent="space-between">
-            <Button
-              w="7rem"
-              isDisabled={step === 2}
-              onClick={() => {
-                document.querySelector('.input_pdf').click();
-              }}
-              colorScheme="blue"
-              variant="outline"
-            >
-              Upload
-            </Button>
-            <input
-              className="input_pdf"
-              accept="application/pdf"
-              type="file"
-              hidden
-              onChange={e => {
-                setSelectedImageFile(e.target.files[0]);
-              }}
-            />
             <Flex>
               <Button
                 onClick={() => {
@@ -392,16 +299,9 @@ export default function CreateProposal() {
                 w="7rem"
                 colorScheme="blue"
                 variant="solid"
-                onClick={() => {
-                  onUploadClick();
-                  toast({
-                    title: 'Account created.',
-                    description: "We've created your account for you.",
-                    status: 'success',
-                    duration: 3000,
-                    isClosable: true,
-                  });
-                }}
+                onClick={createProposal}
+                disabled={proposalLoading}
+                isLoading={proposalLoading}
               >
                 Submit
               </Button>

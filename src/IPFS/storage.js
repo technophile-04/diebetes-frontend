@@ -10,7 +10,7 @@ const metadataBlob = new Blob([JSON.stringify(metadataJson)])
 
 async function uploadToIpfs(metadataBlob, fileName) {
     // setLoading(true)
-    const token = process.env.Web3STORAGE_KEY
+    const token = process.env.REACT_APP_WEB3STORAGE
     const web3Client = new Web3Storage({ token: token })
 
     console.log("Getting Encrypted FIle and key...")
@@ -27,9 +27,10 @@ async function uploadToIpfs(metadataBlob, fileName) {
     return cid
 }
 
-const storage = (fileName) => {
+const storage = (metadata,fileName) => {
     // getFiles()
-    uploadToIpfs(metadataBlob, fileName)
+    const cid = uploadToIpfs(metadata, fileName)
+    return cid
 }
 
 export default storage

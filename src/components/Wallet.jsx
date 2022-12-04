@@ -48,7 +48,7 @@ const Wallet = () => {
         '⚡️ ~ file: SmartAccountContext.tsx:218 ~ getAccountTestBalance ~ state.address',
         state.address
       );
-      const balance = await testContract.balanceOf(address);
+      const balance = await testContract.balanceOf(state.address);
       console.log(
         '⚡️ ~ file: SmartAccountContext.tsx:219 ~ getAccountTestBalance ~ balance',
         balance

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import WorldcoinIntegrationButton from '../components/WorldcoinIntegrationButton';
 import {
   Box,
@@ -16,12 +16,29 @@ import {
   List,
   ListItem,
   Input,
+  Center,
 } from '@chakra-ui/react';
 import ProposalImage from '../img/proposal1.jpg';
 import { Chat } from '@pushprotocol/uiweb';
+import graphQueryProposalId from '../utils/graphQueryProposalId';
 
-const Proposal = () => {
+const Proposal = params => {
   const [fundAmount, setfundAmount] = useState('');
+  const [proposalData, setProposalData] = useState('');
+  /////// For testing ////////
+  const num = 2
+  
+  async function getData() {
+    const data = await graphQueryProposalId(num);
+    console.log('Data in get Data');
+    console.log(data);
+    setProposalData(data);
+  }
+ 
+  useEffect(() => {
+    getData()
+  }, []);
+  console.log('Renders data- ' + proposalData);
 
   return (
     <div>
@@ -130,7 +147,9 @@ const Proposal = () => {
         apiKey="jVPMCRom1B.iDRMswdehJG7NpHDiECIHwYMMv6k2KzkPJscFIDyW8TtSnk4blYnGa8DIkfuacU0"
         env="staging"
       />
-      <WorldcoinIntegrationButton />
+      <Center>
+        <WorldcoinIntegrationButton />
+      </Center>
     </div>
   );
 };

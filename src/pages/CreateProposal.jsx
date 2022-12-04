@@ -214,6 +214,8 @@ export default function CreateProposal() {
   const [target, setTarget] = useState('');
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [cid, setCid] = useState("")
+  const [metaCid,setMetaCid] = useState("")
+
   async function onUploadClick() {
     const cid = await storage(selectedImageFile,"research.pdf")
     console.log(cid);
@@ -227,6 +229,7 @@ export default function CreateProposal() {
     };
     console.log(metadata);
     setCid(cid)
+    const mCid = await storage(new Blob(JSON.stringify(metadata)), "metadata.json")
   }
 
   return (

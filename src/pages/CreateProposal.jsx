@@ -220,6 +220,7 @@ export default function CreateProposal() {
   const [cid, setCid] = useState('');
   const [metaCid, setMetaCid] = useState('');
   const [proposalLoading, setProposalLoading] = useState(false);
+  const [uploadLoading, setUploadLoading] = useState(false);
 
   const { mainSmartAccount: smartAccount } = useSmartAccountContext();
 
@@ -235,7 +236,7 @@ export default function CreateProposal() {
 
       const data1 = dappInterface.encodeFunctionData('createFundingProposal', [
         ethers.utils.parseUnits(target, 'ether'),
-        cid,
+        metaCid,
       ]);
 
       const tx1 = {
@@ -278,23 +279,36 @@ export default function CreateProposal() {
   };
 
   async function onUploadClick() {
-    const cid = await storage(selectedImageFile, 'research.pdf');
-    console.log(cid);
-    const metadata = {
-      proposalTitle: title,
-      description: desc,
-      NftTitle: title2,
-      benefit: benefit,
-      benefit2: benefit2,
-      cid: cid,
-    };
-    console.log(metadata);
-    setCid(cid);
-    const mCid = await storage(
-      new Blob(JSON.stringify(metadata)),
-      'metadata.json'
-    );
-    setMetaCid(mCid);
+    try {
+      setUploadLoading(true);
+      const cid = await storage(selectedImageFile, 'research.pdf');
+      console.log(cid);
+      const metadata = {
+        proposalTitle: title,
+        description: desc,
+        NftTitle: title2,
+        benefit: benefit,
+        benefit2: benefit2,
+        cid: cid,
+      };
+      console.log(metadata);
+      setCid(cid);
+      const mCid = await storage(
+        new Blob(JSON.stringify(metadata)),
+        'metadata.json'
+      );
+      setMetaCid(mCid);
+      setUploadLoading(false);
+    } catch (error) {
+      setUploadLoading(false);
+      toast({
+        title: 'Oops an error occured.',
+        description: 'we ran into an error :(',
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+      });
+    }
   }
 
   return (
@@ -342,6 +356,8 @@ export default function CreateProposal() {
               onClick={() => {
                 document.querySelector('.input_pdf').click();
               }}
+              isLoading={uploadLoading}
+              disabled={uploadLoading}
               colorScheme="blue"
               variant="outline"
             >
@@ -392,15 +408,25 @@ export default function CreateProposal() {
                 w="7rem"
                 colorScheme="blue"
                 variant="solid"
-                onClick={() => {
-                  onUploadClick();
-                  toast({
-                    title: 'Account created.',
-                    description: "We've created your account for you.",
-                    status: 'success',
-                    duration: 3000,
-                    isClosable: true,
-                  });
+                isLoading={proposalLoading}
+                disabled={proposalLoading}
+                onClick={async () => {
+                  try {
+                    await onUploadClick();
+                    await createProposal();
+                  } catch (error) {
+                    console.log(
+                      '⚡️ ~ file: CreateProposal.jsx:418 ~ onClick={ ~ error',
+                      error
+                    );
+                    toast({
+                      title: 'Oops an error occured.',
+                      description: 'we ran into an error :(',
+                      status: 'error',
+                      duration: 2000,
+                      isClosable: true,
+                    });
+                  }
                 }}
               >
                 Submit

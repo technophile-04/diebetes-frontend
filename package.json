@@ -25,6 +25,7 @@
     "ethers": "^5.7.2",
     "framer-motion": "^6.2.9",
     "graphql": "^16.6.0",
+    "ng-file-upload-button": "^1.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^3.0.0",

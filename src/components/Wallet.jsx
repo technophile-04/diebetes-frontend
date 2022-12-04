@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useSmartAccountContext } from '../contexts/SmartAccountContext';
 import { useWeb3AuthContext } from '../contexts/SocialLoginContext';
 import testABI from '../deployments/mumbai/TestToken.json';
+import "./wallet.css"
 
 const truncateRegex = /^(0x[a-zA-Z0-9]{4})[a-zA-Z0-9]+([a-zA-Z0-9]{4})$/;
 
@@ -80,11 +81,11 @@ const Wallet = () => {
   }
 
   return (
-    <HStack position="absolute" top="4" right="0">
-      <Text color="black" border="2px" borderColor="black">
-        {isFetchingTestBalance ? 'loading...' : testBalance}
+    <HStack className='wallet-container' position="absolute" top="4" right="0">
+      <Text className='wallet-balance' color="black" border="2px" borderColor="black">
+        USDC: {isFetchingTestBalance ? 'loading...' : testBalance}
       </Text>
-      <Text color="black">
+      <Text className='wallet-address' color="black">
         {state.address && truncateEthAddress(state.address)}
       </Text>
     </HStack>

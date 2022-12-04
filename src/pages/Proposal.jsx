@@ -18,8 +18,19 @@ import {
 } from '@chakra-ui/react';
 import ProposalImage from "../img/proposal1.jpg";
 import { Chat } from "@pushprotocol/uiweb";
+import { useParams } from 'react-router-dom';
 
 const Proposal = () => {
+  const {proposalAddress} = useParams()
+  console.log("Proposal Address" + proposalAddress);
+  // function name(params) {
+    
+  // }
+  // const testContract = new ethers.Contract(
+  //   testABI.address,
+  //   testABI.abi,
+  //   ethersProvider
+  // );
   return (
     <div>
       <Container maxW={'7xl'}>

@@ -218,6 +218,7 @@ export default function CreateProposal() {
   const [target, setTarget] = useState('');
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [cid, setCid] = useState('');
+  const [metaCid, setMetaCid] = useState('');
   const [proposalLoading, setProposalLoading] = useState(false);
 
   const { mainSmartAccount: smartAccount } = useSmartAccountContext();
@@ -289,6 +290,11 @@ export default function CreateProposal() {
     };
     console.log(metadata);
     setCid(cid);
+    const mCid = await storage(
+      new Blob(JSON.stringify(metadata)),
+      'metadata.json'
+    );
+    setMetaCid(mCid);
   }
 
   return (

@@ -84,10 +84,7 @@ const Home = () => {
                 Wellness Goodness
               </Text>{' '}
             </Heading>
-            <Text fontSize={{ base: 'md', lg: 'lg' }} color={'gray.500'}>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ullam
-              error velit voluptas?
-            </Text>
+            
             <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
               <ConnectButton
                 onClickFunc={
@@ -125,7 +122,7 @@ const Home = () => {
           ? graphData.map(proposal => (
               <Link to={`${parseInt(proposal.id, 16)}`}>
                 <div className="proposal-box">
-                  <p>Id - {parseInt(proposal.id, 16)}</p>
+                  <p>Id{parseInt(proposal.id, 16)}</p>
                   <p>Proposer Name - {proposal.proposer}</p>
                 </div>
               </Link>

@@ -17,7 +17,7 @@ import ConnectButton from '../components/ConnectButton';
 import AddFunds from '../components/AddFunds';
 import Testimonials from '../components/Testimonials';
 import Wallet from '../components/Wallet';
-import { Link } from 'react-router-dom';
+import { Link,button } from 'react-router-dom';
 import SendNotificationButton from '../components/SendNotificationButton';
 import SmartAccount from '@biconomy/smart-account';
 import { ChainId } from '@biconomy/core-types';
@@ -84,7 +84,8 @@ const Home = () => {
                 Wellness Goodness
               </Text>{' '}
             </Heading>
-            
+           
+            </Text>
             <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
               <ConnectButton
                 onClickFunc={
@@ -99,11 +100,12 @@ const Home = () => {
                 isLoading={eoaLoading}
               />
               {address && (
-                <Link to="/create-proposal">
-                  <Button rounded={'full'}>Create Proposal</Button>
-                </Link>
+                <Link to="/create-proposal"><Button variant="contained" color="primary" round="full">Create Proposal</Button>
+               </Link>
+               <Link to="/add-funds"><Button variant="contained" color="primary" round="full">Add Funds</Button>
+               </Link>
               )}
-              {address && <AddFunds />}
+              
             </Stack>
           </Stack>
         </Flex>
@@ -122,7 +124,7 @@ const Home = () => {
           ? graphData.map(proposal => (
               <Link to={`${parseInt(proposal.id, 16)}`}>
                 <div className="proposal-box">
-                  <p>Id{parseInt(proposal.id, 16)}</p>
+                  <p>Id - {parseInt(proposal.id, 16)}</p>
                   <p>Proposer Name - {proposal.proposer}</p>
                 </div>
               </Link>
